@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+bld.make_package('WireCellRio', use='WireCellRioData WireCellUtil WireCellNav WireCellTiling')
+
