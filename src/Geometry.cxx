@@ -1,28 +1,43 @@
 #include "WireCellRio/Geometry.h"
 
-
 using namespace WireCellRio;
-using namespace WireCell;
 
-    /// Produce a GeomDataSource from the given GeometryStore
-GeomDataSource* store2gds(const GeometryStore& store)
+
+Geometry::Geometry(const GeometryStore& geostore)
 {
 }
 
-    /// Produce a GeometryStore from the given GeomDataSource
-GeometryStore* gds2store(const GeomDataSource& gds)
-{
-    
-}
-    
-    /// Save the GeometryStore to the TFile.  Return false on error
-bool save_store(TFile* tfile, const WireCellRio::GeometryStore& store,
-		const char* treename = "geom")
+
+Geometry::~Geometry()
 {
 }
 
-    /// Return a GeometryStore from the given TFile/TTree.
-GeometryStore* load_store(TFile* tfile, const char* treename="geom")
+
+const WireCell::GeomWireSet& Geometry::get_wires() const
 {
 
 }
+
+
+const WireCell::GeomCellSet& Geometry::get_cells() const
+{
+}
+
+
+GeomWireSelection Geometry::wires(const GeomCell& cell) const
+{
+}
+	
+
+GeomCellSelection Geometry::cells(const GeomWire& wire) const
+{
+}
+
+
+const GeomCell* Geometry::cell(const GeomWireSelection& wires) const
+{
+}
+
+
+
+

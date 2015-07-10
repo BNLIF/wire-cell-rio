@@ -22,22 +22,23 @@ using namespace WireCell;
 
 int main()
 {
+
+    // set up some data that normally would come from a real job
     IWireGeometry* wiregeo = make_example_wires(10*units::mm);
     GeomDataSource gds;
     gds.use_wires(*wiregeo);
-
     WireCell::GraphTiling tiling(gds);
 
+    // Convert geometry data to RIO form
     WireCellRio::GeometryStore store;
-
     bool ok = convert(store, *wiregeo, tiling, tiling);
-    
     Assert(ok);
-
     Assert(store.cells.size() == 53484, "wrong number of cells");
     Assert(store.wires.size() == 330, "wrong number of wires");
     Assert(store.points.size() == 197625, "wrong number of points");
 
+
+    // test saving to file
     const char* filename = "test_rio_helpers.root";
     const char* treename = "test_rio";
 
@@ -50,6 +51,7 @@ int main()
     file->Close();
     delete file;
 
+    // test reading back
     file = TFile::Open(filename, "READ");
     Assert(file, "Failed to open ROOT file for reading");
     
