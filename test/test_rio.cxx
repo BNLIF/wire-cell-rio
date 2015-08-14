@@ -1,59 +1,48 @@
 #include "WireCellIface/IGeometry.h"
-#include "WireCellIface/IWireParameters.h"
-#include "WireCellIface/IWireGenerator.h"
-#include "WireCellIface/IWire.h"
-#include "WireCellIface/ICell.h"
-#include "WireCellIface/ITiling.h"
 #include "WireCellIface/IConfigurable.h"
 
 #include "WireCellUtil/Testing.h"
 #include "WireCellUtil/NamedFactory.h"
+#include "WireCellUtil/TimeKeeper.h"
+#include "WireCellUtil/MemUsage.h"
 
 #include <iostream>
 using namespace std;
-
 using namespace WireCell;
 
 
-class MyGeometry : IGeometry {
-    IWireSequence::pointer m_wires;
-    ICellSequence::pointer m_cells;
-    IWireSummary::pointer m_wiresummary;
-    ITiling::pointer m_tiling;
-public:
-
-    virtual IWireSequence::pointer wires() { return m_wires; }
-    virtual ICellSequence::pointer cells() { return m_cells; }
-    virtual ITiling::pointer tiling() { return m_tiling; }
-    virtual IWireSummary::pointer wire_summary() { return m_wiresummary; }
-
-    MyGeometry() {
-	auto wp_wps = WireCell::Factory::lookup<IWireParameters>("WireParams");
-	auto pw_gen = WireCell::Factory::lookup<IWireGenerator>("ParamWires");
-	pw_gen->generate(*wp_wps);
-	m_wires = WireCell::Factory::lookup<IWireSequence>("ParamWires");
-	IWireSink::pointer bc_sink = WireCell::Factory::lookup<IWireSink>("BoundCells");
-	bc_sink->sink(m_wires->wires_range());
-	m_cells = WireCell::Factory::lookup<ICellSequence>("BoundCells");
-	//m_tiling = WireCell::Factory::lookup<ITiling>("GraphTiling");
-	m_tiling = 0;
-    }
-
-    virtual ~MyGeometry() {}
-
-};
-
 int main()
 {
-    WIRECELL_NAMEDFACTORY_USE(WireParams);
-    WIRECELL_NAMEDFACTORY_USE(ParamWires);
-    WIRECELL_NAMEDFACTORY_USE(BoundCells);
-    //WIRECELL_NAMEDFACTORY_USE(GraphTiling);
+    TimeKeeper tk("test rio");
+    MemUsage mu("test rio");
+
+    WIRECELL_NAMEDFACTORY_USE(ParamGeometry);
     WIRECELL_NAMEDFACTORY_USE(RioGeomSink);
 
-    MyGeometry geom;
+    tk("made factories");
+    mu("made factories");
+
+    auto geom = WireCell::Factory::lookup<IGeometry>("ParamGeometry");
+
+    tk("Geometry made");
+    mu("Geometry made");
 
     auto rio_cfg = WireCell::Factory::lookup<IConfigurable>("RioGeomSink");
+    auto cfg = rio_cfg->default_configuration();
+    cfg.put("file", "test_rio.root");
+    cout << configuration_dumps(cfg) << endl;
+    rio_cfg->configure(cfg);
 
+    tk("RIO configured");
+    mu("RIO configured");
 
+    auto rio_sink = WireCell::Factory::lookup<IGeomSink>("RioGeomSink");
+    AssertMsg(rio_sink, "Failed to get RioGeomSink as IGeomSink");
+    rio_sink->sink(geom);
+
+    tk("Geometry sunk to ROOT");
+    mu("Geometry sunk to ROOT");
+
+    cout << "Time summary:\n" << tk.summary() << endl;
+    cout << "Memory usage:\n" << mu.summary() << endl;
 }

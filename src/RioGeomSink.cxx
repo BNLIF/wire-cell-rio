@@ -13,7 +13,7 @@ using namespace WireCell;
 
 WIRECELL_NAMEDFACTORY(RioGeomSink);
 WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeomSink, IConfigurable);
-WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeomSink, IGeometry);
+WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeomSink, IGeomSink);
 
 
 WireCell::RioGeomSink::RioGeomSink()
@@ -94,7 +94,10 @@ void WireCell::RioGeomSink::sink(IGeometry::pointer geom)
     TTree* tree = new TTree(m_tname.c_str(), "RIO Geometry Tree");
     tree->Branch(m_bname.c_str(), &store);
     tree->Fill();
+    tree->Write();
     file->Close();
+
+    delete file;
 }
 
 void WireCell::RioGeomSink::configure(const WireCell::Configuration& cfg)
@@ -113,7 +116,9 @@ WireCell::Configuration WireCell::RioGeomSink::default_configuration() const
        << ",\n"
        << q << "tree" << q << ":" << q << m_tname << q
        << ",\n"
-       << q << "branch" << q << ":" << q << m_bname << q;
+       << q << "branch" << q << ":" << q << m_bname << q
+       << "\n}\n";
+
     return configuration_loads(ss.str(), "json");
 }
 
