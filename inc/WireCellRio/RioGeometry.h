@@ -24,8 +24,6 @@ namespace WireCell {
     private:
 	void initialize();
 
-	WireCellRio::GeometryStore* m_store;
-
 	IWireSequence::pointer m_wires;
 	ICellSequence::pointer m_cells;
 

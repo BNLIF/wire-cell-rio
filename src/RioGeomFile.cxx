@@ -65,7 +65,8 @@ void RioGeomFile::load(WireCellRio::GeometryStore& store)
 {
     TFile* file = TFile::Open(m_fname.c_str(), "READ");
     TTree* tree = dynamic_cast<TTree*>(file->Get(m_tname.c_str()));
-    tree->SetBranchAddress(m_bname.c_str(), &store);
+    WireCellRio::GeometryStore* storeptr = &store;
+    tree->SetBranchAddress(m_bname.c_str(), &storeptr);
     tree->GetEntry(0);
     file->Close();
     delete file;

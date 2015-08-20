@@ -3,46 +3,93 @@
 
 #include "WireCellUtil/Testing.h"
 #include "WireCellUtil/NamedFactory.h"
-#include "WireCellUtil/TimeKeeper.h"
-#include "WireCellUtil/MemUsage.h"
+#include "WireCellUtil/ExecMon.h"
+
+#include <boost/range.hpp>
 
 #include <iostream>
 using namespace std;
 using namespace WireCell;
 
+static int nwires = 0;
+static int ncells = 0;
 
-int main()
+void test_write()
 {
-    TimeKeeper tk("test rio");
-    MemUsage mu("test rio");
-
-    WIRECELL_NAMEDFACTORY_USE(ParamGeometry);
-    WIRECELL_NAMEDFACTORY_USE(RioGeomSink);
-
-    tk("made factories");
-    mu("made factories");
+    ExecMon em("write rio");
 
     auto geom = WireCell::Factory::lookup<IGeometry>("ParamGeometry");
+    AssertMsg(geom, "Failed to get ParamGeometry as IGeometry");
 
-    tk("Geometry made");
-    mu("Geometry made");
+    nwires = boost::distance(geom->wires()->wires_range());
+    ncells = boost::distance(geom->cells()->cells_range());
+
+    em("got input geometry");
 
     auto rio_cfg = WireCell::Factory::lookup<IConfigurable>("RioGeomSink");
+    AssertMsg(rio_cfg, "failed to get configurable for RioGeomSink");
+
     auto cfg = rio_cfg->default_configuration();
     cfg.put("file", "test_rio.root");
     cout << configuration_dumps(cfg) << endl;
     rio_cfg->configure(cfg);
 
-    tk("RIO configured");
-    mu("RIO configured");
-
+    em("got rio geom sink");
     auto rio_sink = WireCell::Factory::lookup<IGeomSink>("RioGeomSink");
     AssertMsg(rio_sink, "Failed to get RioGeomSink as IGeomSink");
+
     rio_sink->sink(geom);
+    em("writing done");
 
-    tk("Geometry sunk to ROOT");
-    mu("Geometry sunk to ROOT");
 
-    cout << "Time summary:\n" << tk.summary() << endl;
-    cout << "Memory usage:\n" << mu.summary() << endl;
+
+    cerr << em.summary() << endl;
+}
+
+void test_read()
+{
+    ExecMon em("read rio");
+
+    auto rio_cfg = WireCell::Factory::lookup<IConfigurable>("RioGeometry");
+    AssertMsg(rio_cfg, "Failed to get RioGeometry as configurable");
+
+    em("got rio input");
+
+    auto cfg = rio_cfg->default_configuration();
+    cfg.put("file", "test_rio.root");
+    cout << configuration_dumps(cfg) << endl;
+    rio_cfg->configure(cfg);
+    
+    auto geom = WireCell::Factory::lookup<IGeometry>("RioGeometry");
+    AssertMsg(geom, "Failed to get RioGeometry as IGeometry");
+
+    em("got rio geom");
+
+    int got_nwires = boost::distance(geom->wires()->wires_range());
+    AssertMsg(nwires == got_nwires, "Didn't read back the number of wires we wrote");
+    int got_ncells = boost::distance(geom->cells()->cells_range());
+    AssertMsg(ncells == got_ncells, "Didn't read back the number of cells we wrote");
+
+    vector<int> wids, cids;
+    for (auto w : geom->wires()->wires_range()) {
+	wids.push_back(w->ident());
+    }
+    for (auto c : geom->cells()->cells_range()) {
+	cids.push_back(c->ident());
+    }
+
+    em("accessed geometry");
+
+    cerr << em.summary() << endl;
+}
+
+int main()
+{
+    WIRECELL_NAMEDFACTORY_USE(ParamGeometry);
+    WIRECELL_NAMEDFACTORY_USE(RioGeomSink);
+
+    test_write();
+    test_read();
+
+    return 0;
 }
