@@ -110,25 +110,6 @@ public:
 
 };
 
-static void get_wires(WireCellRio::GeometryStore& store, IWireVector& wires,
-		      PointVector& points)
-{
-    for (auto wire : store.wires) {
-	IWire::pointer p(new RioWire(wire, points));
-	wires.push_back(p);
-    }
-}
-static void get_cells(WireCellRio::GeometryStore& store, ICellVector& cells,
-		      IWireVector& wires,
-		      PointVector& points)
-{
-    for (auto cell : store.cells) {
-	ICell::pointer p(new RioCell(cell, wires, points));
-	cells.push_back(p);
-    }
-}
-
-
 
 void RioGeometry::initialize()
 {
@@ -143,9 +124,14 @@ void RioGeometry::initialize()
     }
 
     IWireVector temp_wires;
-    get_wires(store, temp_wires, temp_points);
+    for (auto wire : store.wires) {
+	temp_wires.push_back(IWire::pointer(new RioWire(wire, temp_points)));
+    }
+
     ICellVector temp_cells;
-    get_cells(store, temp_cells, temp_wires, temp_points);
+    for (auto cell : store.cells) {
+	temp_cells.push_back(ICell::pointer(new RioCell(cell, temp_wires, temp_points)));
+    }
 
     m_wires = IWireSequence::pointer(new IWireCollection<IWireVector>(temp_wires));
     m_cells = ICellSequence::pointer(new ICellCollection<ICellVector>(temp_cells));
