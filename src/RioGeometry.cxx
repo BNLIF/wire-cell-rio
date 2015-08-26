@@ -21,7 +21,7 @@ RioGeometry::~RioGeometry()
 
 class RioWire : public IWire {
     int m_ident, m_index, m_channel;
-    WirePlaneType_t m_plane;
+    WirePlaneId m_wpid;
     Ray m_ray;
 public:
     RioWire(WireCellRio::Wire& w, PointVector& points)
@@ -30,10 +30,10 @@ public:
 	, m_channel(w.channel)
     {
 	switch (w.plane) {
-	case 0: m_plane = WireCell::kUwire; break;
-	case 1: m_plane = WireCell::kVwire; break;
-	case 2: m_plane = WireCell::kWwire; break;
-	default: m_plane =  WireCell::kUnknownWirePlaneType; break;
+	case 0: m_wpid = WirePlaneId(kUlayer); break;
+	case 1: m_wpid = WirePlaneId(kVlayer); break;
+	case 2: m_wpid = WirePlaneId(kWlayer); break;
+	default: m_wpid =  WirePlaneId(kUnknownLayer); break;
 	}
 	m_ray = Ray(points[w.point1], points[w.point2]);
     }
@@ -42,8 +42,8 @@ public:
 	return m_ident;
     }
 
-    virtual WirePlaneType_t plane() const {
-	return m_plane;
+    virtual WirePlaneId planeid() const {
+	return m_wpid;
     }
 
     virtual int index() const {

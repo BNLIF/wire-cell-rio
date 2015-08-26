@@ -47,13 +47,13 @@ void WireCell::RioGeomSink::sink(IGeometry::pointer geom)
 
 	for (auto iw : tiling->wires(ic)) {
 	    int index = wire_index(iw);
-	    if (iw->plane() == WireCell::kUwire) {
+	    if (iw->planeid().layer() == WireCell::kUlayer) {
 		rc.uid = index;
 	    }
-	    if (iw->plane() == WireCell::kVwire) {
+	    if (iw->planeid().layer() == WireCell::kVlayer) {
 		rc.vid = index;
 	    }
-	    if (iw->plane() == WireCell::kYwire) {
+	    if (iw->planeid().layer() == WireCell::kWlayer) {
 		rc.wid = index;
 	    }
 	}
@@ -63,7 +63,7 @@ void WireCell::RioGeomSink::sink(IGeometry::pointer geom)
     for (auto iw : wire_index.collection) {
 	WireCellRio::Wire rw;
 	rw.ident = iw->ident();
-	rw.plane = iw->plane();
+	rw.plane = iw->planeid().index();
 	rw.index = iw->index();
 	rw.channel = iw->channel();
 	const WireCell::Ray ray = iw->ray();
