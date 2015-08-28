@@ -1,4 +1,2 @@
-
-# No not use Nav (except needed for linking tests). 
-bld.make_package('WireCellRio', use='WireCellRioData WireCellIface', test_use='WireCellNav')
+bld.smplpkg('WireCellRio', use='WireCellRioData WireCellIface', test_use='WireCellGen')
 
