@@ -6,9 +6,10 @@
 
 using namespace WireCell;
 
-WIRECELL_NAMEDFACTORY(RioGeomSink);
-WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeomSink, IConfigurable);
-WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeomSink, IGeomSink);
+WIRECELL_NAMEDFACTORY(RioGeomSink) {
+    WIRECELL_NAMEDFACTORY_INTERFACE(RioGeomSink, IConfigurable);
+    WIRECELL_NAMEDFACTORY_INTERFACE(RioGeomSink, IGeomSink);
+}
 
 
 WireCell::RioGeomSink::RioGeomSink()

@@ -3,9 +3,10 @@
 
 using namespace WireCell;
 
-WIRECELL_NAMEDFACTORY(RioGeometry);
-WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeometry, IConfigurable);
-WIRECELL_NAMEDFACTORY_ASSOCIATE(RioGeometry, IGeometry);
+WIRECELL_NAMEDFACTORY(RioGeometry) {
+    WIRECELL_NAMEDFACTORY_INTERFACE(RioGeometry, IConfigurable);
+    WIRECELL_NAMEDFACTORY_INTERFACE(RioGeometry, IGeometry);
+}
 
 RioGeometry::RioGeometry()
     : RioGeomFile()

@@ -85,9 +85,6 @@ void test_read()
 
 int main()
 {
-    WIRECELL_NAMEDFACTORY_USE(ParamGeometry);
-    WIRECELL_NAMEDFACTORY_USE(RioGeomSink);
-
     test_write();
     test_read();
 
