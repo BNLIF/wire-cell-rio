@@ -28,9 +28,9 @@ void WireCell::RioGeomFile::set(const std::string& tfilename,
 
 void RioGeomFile::configure(const WireCell::Configuration& cfg)
 {
-    m_fname = cfg.get("file", m_fname);
-    m_tname = cfg.get("tree", m_tname);
-    m_bname = cfg.get("branch", m_bname);
+    m_fname = get(cfg, "file", m_fname);
+    m_tname = get(cfg, "tree", m_tname);
+    m_bname = get(cfg, "branch", m_bname);
 }
 
 WireCell::Configuration RioGeomFile::default_configuration() const

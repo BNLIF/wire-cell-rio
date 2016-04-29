@@ -16,16 +16,16 @@ namespace WireCell {
 	RioGeometry();
 	virtual ~RioGeometry();
 
-	virtual IWireSequence::pointer wires();
-	virtual ICellSequence::pointer cells();
+	virtual IWire::vector wires();
+	virtual ICell::vector cells();
 	virtual ITiling::pointer tiling();
 	virtual IWireSummary::pointer wire_summary();
 
     private:
 	void initialize();
 
-	IWireSequence::pointer m_wires;
-	ICellSequence::pointer m_cells;
+	IWire::vector m_wires;
+	ICell::vector m_cells;
 
 	IWireSummary::pointer m_wiresummary;
 	ITiling::pointer m_tiling;
