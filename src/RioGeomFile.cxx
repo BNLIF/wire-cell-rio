@@ -1,5 +1,5 @@
 #include "WireCellRio/RioGeomFile.h"
-
+#include "WireCellUtil/Persist.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
@@ -46,7 +46,7 @@ WireCell::Configuration RioGeomFile::default_configuration() const
        << q << "branch" << q << ":" << q << m_bname << q
        << "\n}\n";
 
-    return configuration_loads(ss.str(), "json");
+    return Persist::loads(ss.str());
 }
 
 

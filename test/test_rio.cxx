@@ -31,7 +31,7 @@ void test_write()
 
     auto cfg = rio_cfg->default_configuration();
     cfg.put("file", "test_rio.root");
-    cout << configuration_dumps(cfg) << endl;
+    cout << cfg << endl;
     rio_cfg->configure(cfg);
 
     em("got rio geom sink");
@@ -57,7 +57,7 @@ void test_read()
 
     auto cfg = rio_cfg->default_configuration();
     cfg.put("file", "test_rio.root");
-    cout << configuration_dumps(cfg) << endl;
+    cout << cfg << endl;
     rio_cfg->configure(cfg);
     
     auto geom = WireCell::Factory::lookup<IGeometry>("RioGeometry");
